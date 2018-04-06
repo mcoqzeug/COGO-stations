@@ -53,12 +53,13 @@
                 center: new google.maps.LatLng(39.97, -82.99)
             });
 
-            var geo_json = "https://opendata.arcgis.com/datasets/a68e8a241e374eac97762c4a90db8353_0.geojson";
+
+            // csv need to have comma as separator
             d3.csv("COGO_Bike_Share_Stations.csv", function(error, data) {
                 if (error) throw error;
 
                 data.forEach(function(d){
-                    d.lat = +d['Y'];
+                    d.lat = +d['Y'];  // convert string to float
                     d.lng = +d['X'];
                 });
 
@@ -88,12 +89,12 @@
                             .attr("cx", padding)
                             .attr("cy", padding);
 
-                        // Add a label.
-                        marker.append("text")
-                            .attr("x", padding + 7)
-                            .attr("y", padding)
-                            .attr("dy", ".31em")
-                            .text(function(d) { return d.value.SITE_NAME; });
+                        // // Add a label.
+                        // marker.append("text")
+                        //     .attr("x", padding + 7)
+                        //     .attr("y", padding)
+                        //     .attr("dy", ".31em")
+                        //     .text(function(d) { return d.value.SITE_NAME; });
 
                         function transform(d) {
                             d = new google.maps.LatLng(d.value.lat, d.value.lng);
