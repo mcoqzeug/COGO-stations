@@ -1,8 +1,10 @@
-var margin = {top: 20, right: 40, bottom: 30, left: 60},
-    width = 700 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+var svg_w = 700,
+    svg_h = 250,
+    margin = {top: 20, right: 40, bottom: 30, left: 60},
+    width = svg_w - margin.left - margin.right,
+    height = svg_h - margin.top - margin.bottom;
 
-var svg = d3.select("#barChart").append("svg").attr("width", 700).attr("height", 450);
+var svg = d3.select("#barChart").append("svg").attr("width", svg_w).attr("height", svg_h);
 
 var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
     y = d3.scaleLinear().rangeRound([height, 0]);
@@ -10,15 +12,21 @@ var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var tooltipMap = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip_map")
+    .html("");
+
+var tooltipBar = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip_map")
+    .html("");
+
 d3.json("stations.json", function(error, data) {
     if (error) throw error;
 
     function draw_list(search_opt, options_list, all_options){
         //dynamically draws the list_radio checkboxes
-
-        //1. Set the list title and sort the options_list
-        document.getElementById('list_title').innerHTML = search_opt.toUpperCase() + " <i>(click to filter)</i>";
-
         options_list.sort();
 
         //2. get distinct values of search_opt from data
@@ -67,10 +75,11 @@ d3.json("stations.json", function(error, data) {
         new_draw_map(data, options_list, search_opt);
         draw_bars();
     }
-    
+
     function draw_bars() {
-        x.domain(data.map(function(d) { return d.SITE_NAME; }));
-        y.domain([0, d3.max(data, function(d) { return d.INCOME; })]);
+        x.domain(data.sort( function(a, b) { return b.INCOME - a.INCOME; })
+            .map(function(d) { return d.SITE_NAME; }));
+        y.domain([0, d3.max(data, function(d) { return d.INCOME; })+8000]);
 
         g.append("g")
             .attr("class", "axis axis--x")
@@ -81,6 +90,7 @@ d3.json("stations.json", function(error, data) {
             .attr("x", -10)
             .attr("dy", ".35em")
             .attr("transform", "rotate(-90)")
+            // .attr("font-family", "sans-serif")
             .style("text-anchor", "end");
 
         g.append("g")
@@ -88,24 +98,60 @@ d3.json("stations.json", function(error, data) {
             .call(d3.axisLeft(y).ticks(10)
                 .tickFormat(d3.format(".0s")))
             .append("text")
-            .attr("transform", "rotate(-90)")
+            // .attr("transform", "rotate(-90)")
+            .attr("x", 6)
             .attr("y", 6)
             .attr("dy", "0.71em")
-            .attr("text-anchor", "end")
+            .attr("text-anchor", "start")
+            .attr("font-family", "sans-serif")
             .style('fill', 'black')
             .text("Frequency");
 
         g.selectAll(".bar")
-            .data(data)
+            .data(data.sort(function(a, b){ return b["INCOME"] - a["INCOME"]} ))
             .enter().append("rect")
             .attr("class", "bar")
+            .attr("id", function(d) { return d.BIKESHARE_ID; })
             .attr("x", function(d) { return x(d.SITE_NAME); })
             .attr("y", function(d) { return y(d.INCOME); })
-            .attr("width", function() {
-                console.log(x.bandwidth());
-                return x.bandwidth()
+            .attr("width", function() { return x.bandwidth() })
+            .attr("height", function(d) { return height - y(d.INCOME); })
+            .on("mouseover", function (d) {
+                t_text = "Site Name: " + d["SITE_NAME"] + "<br>Income: " + d.INCOME;
+                tooltipBar.html(t_text);
+
+                var bar_id = "rect[id='" + d.BIKESHARE_ID + "']";
+                d3.select(bar_id)
+                    .style("fill", "brown");
+
+                var map_id = "image[id='" + d.BIKESHARE_ID + "map']";
+                d3.select(map_id)
+                    .attr("xlink:href", "highlight.png");
+
+                return tooltipBar.style("visibility", "visible");
             })
-            .attr("height", function(d) { return height - y(d.INCOME); });
+            .on("mousemove", function(){
+                return tooltipBar.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+            })
+            .on("mouseout", function(d){
+                d3.selectAll(".bar")
+                    .style("fill", "steelblue");
+
+                var map_id = "image[id='" + d.BIKESHARE_ID + "map']";
+                d3.select(map_id)
+                    .attr("xlink:href", function(d) {
+                        if (d.INCOME < 20000) {
+                            return "0_20.png";
+                        } else if (d.INCOME < 40000) {
+                            return "20_40.png";
+                        } else if (d.INCOME < 60000) {
+                            return "40_60.png";
+                        } else if (d.INCOME < 80000) {
+                            return "60_80.png";
+                        } else return "80+.png"; });
+
+                return tooltipBar.style("visibility", "hidden");
+            });
     }
 
     function apply_filters(data, search_opt, filter_by){
@@ -388,7 +434,7 @@ d3.json("stations.json", function(error, data) {
             ], {name: 'Styled Map'});
 
         var map = new google.maps.Map(d3.select("#map").node(), {
-            zoom: 8,
+            zoom: 10,
             center: new google.maps.LatLng(39.97, -82.99),
             mapTypeControl: false
         });
@@ -411,11 +457,6 @@ d3.json("stations.json", function(error, data) {
                 var projection = this.getProjection(),
                     padding = 10;
 
-                var tooltip = d3.select("body")
-                    .append("div")
-                    .attr("class", "tooltip_map")
-                    .html("");
-
                 var marker = layer.selectAll("svg")
                     .data(my_data)
                     .each(transform) // update existing markers
@@ -425,24 +466,40 @@ d3.json("stations.json", function(error, data) {
 
                 // Add an image to each location.
                 marker.append("image")
-                    .attr("xlink:href", "80+.png")
+                    .attr("xlink:href", function(d) {
+                        if (d.INCOME < 20000) {
+                            return "0_20.png";
+                        } else if (d.INCOME < 40000) {
+                            return "20_40.png";
+                        } else if (d.INCOME < 60000) {
+                            return "40_60.png";
+                        } else if (d.INCOME < 80000) {
+                            return "60_80.png";
+                        } else return "80+.png"; })
+                    .attr("id", function(d) { return d.BIKESHARE_ID+"map"; })
                     .attr("height", 30)
                     .attr("width", 30)
                     .attr("x", padding)
                     .attr("y", padding)
-                    .on("mouseover", mouseOver)
-                    .on("mousemove", function(){
-                        return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
-                    })
-                    .on("mouseout", function(){
-                        return tooltip.style("visibility", "hidden");
-                    });
+                    .on("mouseover", function(d) {
+                        t_text = "Site Name: " + d.SITE_NAME + "<br>Income: " + d.INCOME;
+                        tooltipMap.html(t_text);
 
-                function mouseOver(d){
-                    t_text = "Site Name: " + d.SITE_NAME + "<br>Income: " + d.INCOME;
-                    tooltip.html(t_text);
-                    return tooltip.style("visibility", "visible");
-                }
+                        var bar_id = "rect[id='" + d.BIKESHARE_ID + "']";
+
+                        d3.select(bar_id)
+                            .style("fill", "brown");
+
+                        return tooltipMap.style("visibility", "visible");
+                    })
+                    .on("mousemove", function() {
+                        return tooltipMap.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+                    })
+                    .on("mouseout", function() {
+                        d3.selectAll(".bar")
+                            .style("fill", "steelblue");
+                        return tooltipMap.style("visibility", "hidden");
+                    });
 
                 function transform(d) {
                     d = new google.maps.LatLng(+d.Y, +d.X);
