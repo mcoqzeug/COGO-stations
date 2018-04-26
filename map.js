@@ -1,86 +1,53 @@
-var svg_w = 700,
-    svg_h = 250,
-    margin = {top: 20, right: 40, bottom: 30, left: 60},
-    width = svg_w - margin.left - margin.right,
-    height = svg_h - margin.top - margin.bottom;
-
-var svg = d3.select("#barChart").append("svg").attr("width", svg_w).attr("height", svg_h);
-
-var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
-    y = d3.scaleLinear().rangeRound([height, 0]);
-
-var g = svg.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var tooltipMap = d3.select("body")
-    .append("div")
-    .attr("class", "tooltip_map")
-    .html("");
-
-var tooltipBar = d3.select("body")
-    .append("div")
-    .attr("class", "tooltip_map")
-    .html("");
-
 d3.json("stations.json", function(error, data) {
     if (error) throw error;
 
-    function draw_list(search_opt, options_list, all_options){
-        //dynamically draws the list_radio checkboxes
+    function draw_list(options_list){
+        // dynamically draws the list_radio checkboxes
         options_list.sort();
 
-        //2. get distinct values of search_opt from data
-        //dynamically create radio button with none selected
-        radio_string = "";
-        for (i = 0; i < options_list.length; i++) {
+        // get distinct values of search_opt from data
+        // dynamically create radio button with none selected
+        let radio_string = "";
+        for (let i = 0; i < options_list.length; i++) {
             radio_string += "<input type='radio' id='" + options_list[i] ;
-            radio_string += "' name='options' value='" + options_list[i] + "checked='checked'";
+            radio_string += "' name='options' value='" + options_list[i] + "' checked='checked'";
             radio_string += "'><label for='" + options_list[i] + "'>" + options_list[i];
             radio_string += "</label>&nbsp;&nbsp;";
         }
 
         document.getElementById('list_radio').innerHTML = radio_string;
 
-        //set the on_change event to redraw charts whenever a checkbox option is selected
+        // set the on_change event to redraw charts whenever a checkbox option is selected
         d3.selectAll('input[name="options"]')
             .on('change', function() {
-                //return a list of 'selected' radios or none if there are none
-                all_options = options_selected();
-
-                //redraw charts according to selections
-                new_draw_map(data, options_list, search_opt, all_options)
+                svg.selectAll("*").remove();  // remove old bars
+                draw_bars(options_selected(), svg)
         })
     }
 
-    function reset_data() {
-        //creates a set of distinct 'option' values dependent on search_opt
-        options_list = ['INCOME', 'POPULATION'];
-    }
-
     function options_selected(){
-        //looks at dynamically drawn options and adds any 'checked' values to the list
-        var checked = document.querySelectorAll('input[name="options"]:checked');
+        // looks at dynamically drawn options and adds any 'checked' values to the list
+        let checked = document.querySelectorAll('input[name="options"]:checked');
         checked = Array.prototype.slice.call(checked);
-        my_list = [];
 
-        if (checked.length === 0) { }  // there are no checked checkboxes
-        else { checked.forEach(function(d) { my_list.push(d.id) }) }  // there are some checked checkboxes
-
-        // return my_list;
-        return [];
+        return checked[0].id;
     }
 
     function draw_charts() {
-        draw_list(search_opt, options_list);
-        new_draw_map(data, options_list, search_opt);
-        draw_bars();
+        draw_list(options_list);
+        new_draw_map(data, options_list);
+        draw_bars("POPULATION");
     }
 
-    function draw_bars() {
-        x.domain(data.sort( function(a, b) { return b.INCOME - a.INCOME; })
-            .map(function(d) { return d.SITE_NAME; }));
-        y.domain([0, d3.max(data, function(d) { return d.INCOME; })+8000]);
+    function draw_bars(y_value) {
+        let g = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        x.domain(data.sort( function(a, b) { return b[y_value] - a[y_value]; })
+            .map(function(d) { return d["SITE_NAME"]; }));
+        y.domain([0, d3.max(data, function(d) { return d[y_value]; }) * 1.2]);
+
+        // x-axis
         g.append("g")
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + (height).toString() + ")")
@@ -90,41 +57,42 @@ d3.json("stations.json", function(error, data) {
             .attr("x", -10)
             .attr("dy", ".35em")
             .attr("transform", "rotate(-90)")
-            // .attr("font-family", "sans-serif")
             .style("text-anchor", "end");
 
+        // y-axis
         g.append("g")
             .attr("class", "axis axis--y")
             .call(d3.axisLeft(y).ticks(10)
                 .tickFormat(d3.format(".0s")))
             .append("text")
-            // .attr("transform", "rotate(-90)")
             .attr("x", 6)
             .attr("y", 6)
             .attr("dy", "0.71em")
             .attr("text-anchor", "start")
             .attr("font-family", "sans-serif")
             .style('fill', 'black')
-            .text("Frequency");
+            .text(y_value);
 
         g.selectAll(".bar")
             .data(data.sort(function(a, b){ return b["INCOME"] - a["INCOME"]} ))
             .enter().append("rect")
             .attr("class", "bar")
-            .attr("id", function(d) { return d.BIKESHARE_ID; })
-            .attr("x", function(d) { return x(d.SITE_NAME); })
-            .attr("y", function(d) { return y(d.INCOME); })
+            .attr("id", function(d) { return d["BIKESHARE_ID"]; })
+            .attr("x", function(d) { return x(d["SITE_NAME"]); })
+            .attr("y", function(d) { return y(d[y_value]); })
             .attr("width", function() { return x.bandwidth() })
-            .attr("height", function(d) { return height - y(d.INCOME); })
+            .attr("height", function(d) { return height - y(d[y_value]); })
             .on("mouseover", function (d) {
-                t_text = "Site Name: " + d["SITE_NAME"] + "<br>Income: " + d.INCOME;
+                let t_text = d["SITE_NAME"] +
+                    "<br>----------------------" +
+                    "<br>"+ y_value + ":" + d[y_value];
                 tooltipBar.html(t_text);
 
-                var bar_id = "rect[id='" + d.BIKESHARE_ID + "']";
+                let bar_id = "rect[id='" + d["BIKESHARE_ID"] + "']";
                 d3.select(bar_id)
                     .style("fill", "brown");
 
-                var map_id = "image[id='" + d.BIKESHARE_ID + "map']";
+                let map_id = "image[id='" + d["BIKESHARE_ID"] + "map']";
                 d3.select(map_id)
                     .attr("xlink:href", "highlight.png");
 
@@ -137,53 +105,34 @@ d3.json("stations.json", function(error, data) {
                 d3.selectAll(".bar")
                     .style("fill", "steelblue");
 
-                var map_id = "image[id='" + d.BIKESHARE_ID + "map']";
+                let map_id = "image[id='" + d["BIKESHARE_ID"] + "map']";
                 d3.select(map_id)
                     .attr("xlink:href", function(d) {
-                        if (d.INCOME < 20000) {
-                            return "0_20.png";
-                        } else if (d.INCOME < 40000) {
-                            return "20_40.png";
-                        } else if (d.INCOME < 60000) {
-                            return "40_60.png";
-                        } else if (d.INCOME < 80000) {
-                            return "60_80.png";
-                        } else return "80+.png"; });
+                        if (d["INCOME"] < 20000) {
+                            return "img/0_20.png";
+                        } else if (d["INCOME"] < 40000) {
+                            return "img/20_40.png";
+                        } else if (d["INCOME"] < 60000) {
+                            return "img/40_60.png";
+                        } else if (d["INCOME"] < 80000) {
+                            return "img/60_80.png";
+                        } else return "img/80+.png"; });
 
                 return tooltipBar.style("visibility", "hidden");
             });
     }
 
-    function apply_filters(data, search_opt, filter_by){
-        //used by both bars, line and donut
-        //filters the data by values in filter_by if a filtering list exists
+    function new_draw_map(data) {
+        let bound = new google.maps.LatLngBounds();
 
-        if (filter_by === undefined){ filter_by = [] }
-
-        if (filter_by.length > 0) {
-            my_data = data.filter(function(d){
-                return filter_by.indexOf(d[search_opt]) > -1;
-            });
-        }
-        else{ my_data = data; }
-
-        return my_data;
-    }
-
-    function new_draw_map(data, options_list, search_opt, filter_by) {
-        // Apply filters
-        my_data = apply_filters(data, search_opt, filter_by);
-
-        var bound = new google.maps.LatLngBounds();
-
-        my_data.forEach(function(d){
-            long = +d.X;
-            lat = +d.Y;
+        data.forEach(function(d){
+            let long = +d.X;
+            let lat = +d.Y;
             bound.extend(new google.maps.LatLng(lat, long));
         });
 
         // Create the Google Map
-        var styledMapType = new google.maps.StyledMapType([
+        let styledMapType = new google.maps.StyledMapType([
                 {
                     "elementType": "geometry",
                     "stylers": [
@@ -433,7 +382,7 @@ d3.json("stations.json", function(error, data) {
                 }
             ], {name: 'Styled Map'});
 
-        var map = new google.maps.Map(d3.select("#map").node(), {
+        let map = new google.maps.Map(d3.select("#map").node(), {
             zoom: 10,
             center: new google.maps.LatLng(39.97, -82.99),
             mapTypeControl: false
@@ -445,47 +394,48 @@ d3.json("stations.json", function(error, data) {
 
         map.fitBounds(bound);
 
-        var overlay = new google.maps.OverlayView();
+        let overlay = new google.maps.OverlayView();
 
         // Add the container when the overlay is added to the map.
         overlay.onAdd = function() {
-            var layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "effective");
+            let layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "effective");
 
             // Draw each marker as a separate SVG element.
             // We could use a single SVG, but what size would it have?
             overlay.draw = function() {
-                var projection = this.getProjection(),
-                    padding = 10;
-
-                var marker = layer.selectAll("svg")
-                    .data(my_data)
+                let projection = this.getProjection(),
+                    padding = 10,
+                    marker = layer.selectAll("svg")
+                    .data(data)
                     .each(transform) // update existing markers
                     .enter().append("svg")
                     .each(transform)
                     .attr("class", "marker");
 
-                // Add an image to each location.
+                // Add an image to each location
                 marker.append("image")
                     .attr("xlink:href", function(d) {
-                        if (d.INCOME < 20000) {
-                            return "0_20.png";
-                        } else if (d.INCOME < 40000) {
-                            return "20_40.png";
-                        } else if (d.INCOME < 60000) {
-                            return "40_60.png";
-                        } else if (d.INCOME < 80000) {
-                            return "60_80.png";
-                        } else return "80+.png"; })
-                    .attr("id", function(d) { return d.BIKESHARE_ID+"map"; })
+                        if (d["INCOME"] < 20000) {
+                            return "img/0_20.png";
+                        } else if (d["INCOME"] < 40000) {
+                            return "img/20_40.png";
+                        } else if (d["INCOME"] < 60000) {
+                            return "img/40_60.png";
+                        } else if (d["INCOME"] < 80000) {
+                            return "img/60_80.png";
+                        } else return "img/80+.png"; })
+                    .attr("id", function(d) { return d["BIKESHARE_ID"] + "map"; })
                     .attr("height", 30)
                     .attr("width", 30)
                     .attr("x", padding)
                     .attr("y", padding)
                     .on("mouseover", function(d) {
-                        t_text = "Site Name: " + d.SITE_NAME + "<br>Income: " + d.INCOME;
+                        let t_text = d["SITE_NAME"] +
+                            "<br>----------------------" +
+                            "<br>" + "Income" + ":" + d["INCOME"];
                         tooltipMap.html(t_text);
 
-                        var bar_id = "rect[id='" + d.BIKESHARE_ID + "']";
+                        let bar_id = "rect[id='" + d["BIKESHARE_ID"] + "']";
 
                         d3.select(bar_id)
                             .style("fill", "brown");
@@ -512,13 +462,32 @@ d3.json("stations.json", function(error, data) {
             };
         };
 
-        // Bind our overlay to the map
-        overlay.setMap(map);
-    };
+        overlay.setMap(map); // Bind our overlay to the map
+    }
 
-    var search_opt = 'SITE_NAME';
-    var all_options = true;
 
-    reset_data();
+    let options_list = ['POPULATION', 'INCOME'];
+
+    let svg_w = 800,
+        svg_h = 300,
+        margin = {top: 20, right: 40, bottom: 30, left: 60},
+        width = svg_w - margin.left - margin.right,
+        height = svg_h - margin.top - margin.bottom;
+
+    let svg = d3.select("#bar_chart").append("svg").attr("width", svg_w).attr("height", svg_h);
+
+    let x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+        y = d3.scaleLinear().rangeRound([height, 0]);
+
+    let tooltipMap = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip_map")
+        .html("");
+
+    let tooltipBar = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip_bar")
+        .html("");
+
     draw_charts();
 });
