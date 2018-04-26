@@ -1,48 +1,39 @@
 <html>
     <head>
-        <!--Index file with base table format + links to css and js files-->
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <!--<script src="d3.superformula.min.js"></script>-->
+        <script src="d3.v4.min.js"></script>
         <script src="//maps.google.com/maps/api/js?key=AIzaSyA4utTxvNgWCaBigDNMUNGkvzCstDgX2hQ"></script>
-        <link rel="stylesheet" href="dv.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <table>
-            <!--<tr> &lt;!&ndash;Row 1 - title image and colour key&ndash;&gt;-->
-                <!--<td id='title_img'><img height='80px' src='logo.png'></td>-->
-                <!--<td colspan='2' id='title'>-->
-                    <!--<input type="radio" id='location' name="search_option" value="location" checked="checked"><label for="location"> Location </label>&nbsp;&nbsp;-->
-                    <!--<input type="radio" id='dashboard' name="search_option" value="dashboard"><label for="dashboard"> Dashboard </label>&nbsp;&nbsp;-->
-                    <!--<input type="radio" id='manager' name="search_option" value="manager"><label for="manager"> Manager </label>&nbsp;&nbsp;-->
-                    <!--<input type="radio" id='department' name="search_option" value="department"><label for="department"> Department </label>&nbsp;&nbsp;-->
-                    <!--<input type="radio" id='group' name="search_option" value="group"><label for="group"> Group </label>&nbsp;&nbsp;-->
-                <!--</td>-->
-            <!--</tr>-->
-            <tr> <td colspan='3' height="20"></td> </tr> <!--Row 1 - a break so there is a space between different rows-->
-            <tr> <!--Row 2 - charts - 4 columns, charts in individual  tables -->
-                <!--list_title - dynamically created checkbox - see effective.js -->
-                <td class='chart_td'>
-                    <table class='text_table'>
-                        <tr> <td> <img src="bike.png" height="200" width="200"> </td> </tr>
-                        <tr> <td id='list_title'> Who Goes COGO? </td> </tr>
+            <tr> <td colspan='5' height="30"></td> </tr> <!-- Row 1: blank -->
+            <tr> <!-- Row 2: texts, map, and chart -->
+                <td width="60"></td> <!-- Column 1: blank -->
+                <td class='chart_td'> <!-- Column 2: texts -->
+                    <table>
+                        <tr> <td align="center"> <img src="img/bike.png" height="300" width="300"> </td> </tr>
+                        <tr> <td id='list_title1'> Who Goes </td> </tr>
+                        <tr> <td id='list_title2'> COGO? </td> </tr>
                         <tr>
                             <td>
                                 Temporary transportation services like CoGo Bike Share could serve as cost-effective alternatives to owning private
-                                <br> <br> transportation, though low-income individuals may have restricted access to them. We will locate the primary areas of operation for these services and contrast them with resident income data as well as other demographic data, with the purpose of learning if there is a correlation between demographic factors and access to this service, and to determine if they are geographically feasible options for residents of low-income neighborhoods.
+                                <br>
+                                <br> transportation, though low-income individuals may have restricted access to them. We will locate the primary areas of operation for these services and contrast them with resident income data as well as other demographic data, with the purpose of learning if there is a correlation between demographic factors and access to this service, and to determine if they are geographically feasible options for residents of low-income neighborhoods.
                             </td>
                         </tr>
                         <tr> <td height="100"></td> </tr>
-                        <tr> <td> Conclusion: </td> </tr>
+                        <tr> <td width="350"> Conclusion: lkjflkd jdfds jdsflkdsjflk lkjflkjdsf jlkfjsdf lkjf sjfl dfjlks dlkjf sj flkjf dfjlkjeofje wrlke jr ew ewrjelk rwle rewkj l lkjkjjlk</td> </tr>
                     </table>
                 </td>
-                <!--map td and title -->
-                <td class='chart_td'>
-                    <table class='chart_table'>
+                <td width="40"></td> <!-- Column 3: blank -->
+                <td class='chart_td'> <!-- Column 4: map and chart -->
+                    <table>
                         <tr> <td id='list_radio'></td> </tr>
                         <tr> <td> <div id="map"></div> </td> </tr>
-                        <tr> <td> <div id="barChart"></div> </td> </tr>
+                        <tr> <td> <div id="bar_chart"></div> </td> </tr>
                     </table>
                 </td>
+                <td width="60"></td> <!-- Column 5: blank -->
             </tr>
         </table>
         <script src="map.js"></script>
