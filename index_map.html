@@ -5,35 +5,47 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <table>
-            <tr> <td colspan='5' height="30"></td> </tr> <!-- Row 1: blank -->
+        <title> COGO Stations </title>
+        <table cellpadding="30">
             <tr> <!-- Row 2: texts, map, and chart -->
-                <td width="60"></td> <!-- Column 1: blank -->
+                <td width="50"></td> <!-- Column 1: blank -->
                 <td class='chart_td'> <!-- Column 2: texts -->
-                    <table>
-                        <tr> <td align="center"> <img src="img/bike.png" height="300" width="300"> </td> </tr>
-                        <tr> <td id='list_title1'> Who Goes </td> </tr>
-                        <tr> <td id='list_title2'> COGO? </td> </tr>
+                    <table class="text_column">
+                        <tr> <td align="center"> <img src="img/bike.png" height="200" width="200"> </td> </tr>
+                        <tr> <td id="list_title1"> Who Goes </td> </tr>
+                        <tr> <td id="list_title2"> COGO? </td> </tr>
                         <tr>
                             <td>
-                                Temporary transportation services like CoGo Bike Share could serve as cost-effective alternatives to owning private
-                                <br>
-                                <br> transportation, though low-income individuals may have restricted access to them. We will locate the primary areas of operation for these services and contrast them with resident income data as well as other demographic data, with the purpose of learning if there is a correlation between demographic factors and access to this service, and to determine if they are geographically feasible options for residents of low-income neighborhoods.
+                                CoGo Bike Share allows thousands of Columbus
+                                citizens access to cheap, temporary transportation.
+                                <strong>But who is the service really for?</strong>
+                                Using data collected by the City of Columbus and
+                                CoGo, this visualization highlights 47 bike share
+                                stations in context with the people who live and
+                                work nearby.
                             </td>
                         </tr>
-                        <tr> <td height="100"></td> </tr>
-                        <tr> <td width="350"> Conclusion: lkjflkd jdfds jdsflkdsjflk lkjflkjdsf jlkfjsdf lkjf sjfl dfjlks dlkjf sj flkjf dfjlkjeofje wrlke jr ew ewrjelk rwle rewkj l lkjkjjlk</td> </tr>
+                        <tr> <td height="80"></td> </tr>
+                        <tr> <td id="conclusion" height="240">
+                            <!--Conclusion: Income-->
+                            <!--<br>-->
+                            <!--<br> Based on neighborhood income data collected from-->
+                            <!--www.city-data.com, it appears that CoGo stations are-->
+                            <!--primarily placed to serve community that has annual-->
+                            <!--median household income lower than $80,000. CoGo bikes-->
+                            <!--in lower-income areas are less likely to be used-->
+                            <!--comparing to bikes in higher-income areas.-->
                     </table>
                 </td>
                 <td width="40"></td> <!-- Column 3: blank -->
-                <td class='chart_td'> <!-- Column 4: map and chart -->
+                <td class='chart_td' width="600"> <!-- Column 4: map and chart -->
                     <table>
                         <tr> <td id='list_radio'></td> </tr>
                         <tr> <td> <div id="map"></div> </td> </tr>
                         <tr> <td> <div id="bar_chart"></div> </td> </tr>
                     </table>
                 </td>
-                <td width="60"></td> <!-- Column 5: blank -->
+                <td width="80"></td> <!-- Column 5: blank -->
             </tr>
         </table>
         <script src="map.js"></script>
