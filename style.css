@@ -1,10 +1,6 @@
 /* bars */
-.bar {
-    /*fill: steelblue;*/
-}
-
 .axis--x path {
-    /*display: none;*/
+    display: none;
 }
 
 /* ALL TABLES */
@@ -16,11 +12,10 @@ table {
 }
 
 table, td {
-    border: 1px solid black;
+    /*border: 1px solid black;*/
 }
 
 .chart_td {
-    padding: 10px;
     vertical-align: top;
 }
 
@@ -28,7 +23,7 @@ table, td {
 #list_title1, #list_title2 {
     text-align: center;
     font-weight: 900;
-    color: #757575;
+    color: #696969;
 }
 
 #list_title1 {
@@ -39,10 +34,28 @@ table, td {
     font-size: 53px;
 }
 
+.text_column {
+    width: 300px;
+    color: #696969;
+}
+
+#conclusion {
+    background: #E0E0E0;
+    position: relative;
+}
+
+
+#conclusion_content {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+}
+
 /* Chart  Tds */
-#list_radio{
+#list_radio {
     vertical-align: top;
-    background-color: #757575;
+    background-color: #696969;
     text-align: left;
     font-size: 16px;
     padding: 10px;
@@ -67,39 +80,39 @@ table, td {
 }
 
 /* Colour Table and individual tds - Colour key, Row 1*/
-#colours{
+#colours {
     width: 30%;
 }
 
 /* Line Chart lines, tooltips and All axes text and paths */
-.tooltip_map{
-    width: 200px;
-    height: auto;
-    text-align: left;
+.tooltipUp, .tooltipDown, .tooltipSymbol {
+    text-align: center;
     visibility: hidden;
     position: absolute;
-    border: 1px solid grey;
     padding: 5px;
-    font: 25px sans-serif;
-    background: white;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: sans-serif;
     border-radius: 4px;
     pointer-events: none;
 }
 
-.tooltip_bar{
-    width: 200px;
-    height: 200px;
-    text-align: left;
-    visibility: hidden;
-    position: absolute;
-    border: 1px solid grey;
-    padding: 5px;
-    font: 25px sans-serif;
+.tooltipUp {
+    background: #696969;
+    color: white;
+}
+
+.tooltipDown {
     background: white;
-    border-radius: 4px;
-    pointer-events: none;
-    margin-left: -100px; /* Use half of the width (200/2 = 100), to center the tooltip */
-    margin-top: -210px;  /* slightly larger than height*/
+    color: #696969;
+}
+
+.dolorImg {
+    width: 50px;
+    height: 50px;
+    text-align: left;
+    display: block;
+    margin: 0;
 }
 
 .line {
@@ -119,14 +132,14 @@ input[name="options"] {
 }
 
 input[name="search_option"]:checked + label {
-    color: #57bcd2;
+    color: #523ba5;
 }
 
 input[name="options"]:checked + label {
-    color: #57bcd2;
+    color: #523ba5;
 }
 
-#input{
+#input {
     padding: 10px;
     font-size: 20px;
 }
