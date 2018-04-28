@@ -225,12 +225,24 @@ d3.json("stations.json", function(error, data) {
         let x = d3.scaleBand().rangeRound([0, width]),
             y = d3.scaleLinear().rangeRound([height, 0]);
 
+        let y_offset = 0;
+
+        if (y_value === "INCOME") {
+            y_offset = 0;
+        } else if (y_value === "POPULATION") {
+            y_offset = 0;
+        } else if (y_value === "N_HOUSEHOLD") {
+            y_offset = 0;
+        } else if (y_value === "AGE") {
+            y_offset = 17;
+        }
+
         x.domain(data
             .sort(function(a, b) { return b[y_value] - a[y_value] })
             .map(function(d) { return d[x_value] }))
             .paddingInner(0.1)
             .paddingOuter(0.1);
-        y.domain([0, d3.max(data, function(d) { return d[y_value] })]);
+        y.domain([y_offset, d3.max(data, function(d) { return d[y_value] })]);
 
         // add x-axis
         // let x_axis = g.append("g")
@@ -311,6 +323,8 @@ d3.json("stations.json", function(error, data) {
             y_offset = 500;
         } else if (y_value === "N_HOUSEHOLD") {
             y_offset = 100;
+        } else if (y_value === "AGE") {
+            y_offset = 2;
         }
 
         let title_font_size = 16;  // font size of labels
