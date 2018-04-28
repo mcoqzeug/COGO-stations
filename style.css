@@ -180,3 +180,7 @@ input[name="options2"]:checked + label {
     visibility: visible;
     opacity: 1;
 }
+
+.tooltipO:hover{
+    text-decoration: underline;
+}
