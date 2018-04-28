@@ -9,20 +9,15 @@ d3.json("stations.json", function(error, data) {
         let radio_string = "<input type='radio' id='" + options_list[0] +
             "' name='options' value='" + options_list[0] + "' checked='checked'" +
             "><label class=\"tooltipO\" for='" + options_list[0] + "'>" + op +
-            // "<span class=\"tooltipOText\">Tooltip text</span>"+
             "</label>&nbsp;&nbsp;";
 
         for (let i = 1; i < options_list.length; i++) {
             op = attributeCovert[options_list[i]];
             radio_string += "<input type='radio' id='" + options_list[i] +
                 "' name='options' value='" + options_list[i] +
-                // " checked='checked'" +
                 "'><label class=\"tooltipO\" for='" + options_list[i] + "'>" + op +
-                // "<span class=\"tooltipOText\">Tooltip text</span>"+
                 "</label>&nbsp;&nbsp;";
         }
-
-        console.log(radio_string);
 
         document.getElementById('list_radio').innerHTML = radio_string;
 
@@ -269,31 +264,14 @@ d3.json("stations.json", function(error, data) {
             .paddingOuter(0.1);
         y.domain([y_offset, d3.max(data, function(d) { return d[y_value] })]);
 
-        // add x-axis
-        // let x_axis = g.append("g")
-        //     .attr("class", "axis--x")
-        //     .attr("transform", "translate(0," + (height).toString() + ")")
-        //     // .call(d3.axisBottom(x))
-        // ;
-
         let title_font_size = 16;
 
-        // // add x-axis title
-        // x_axis.append("text")
-        //     .attr("x", width/2)  // center aligned title
-        //     .attr("y", title_font_size*2)
-        //     .attr("dy", "0.7em")
-        //     .attr("text-anchor", "middle")
-        //     .attr("font-size", title_font_size)
-        //     .attr('fill', 'black')
-        //     .text("Stations");
         g.append("text")
             .attr("transform", "translate(" + width/2 + "," + (height+title_font_size).toString() + ")")
             .attr("text-anchor", "middle")
             .attr("font-size", title_font_size)
             .attr('fill', 'black')
-            .text("Stations")
-        ;
+            .text("Stations");
 
         let yTickFormat = d3.format(".0s");
 
@@ -394,7 +372,7 @@ d3.json("stations.json", function(error, data) {
             // .attr("class", "axis--x2")
             .call(d3.axisBottom(x)
                 .ticks(5)
-                .tickFormat(yTickFormat))
+                .tickFormat(d3.format(".0s")))
             .append("text")
             .attr("x", width/2)  // center aligned title
             .attr("y", title_font_size*2)
@@ -402,13 +380,13 @@ d3.json("stations.json", function(error, data) {
             .attr("text-anchor", "middle")
             .attr("font-size", title_font_size)
             .attr('fill', 'black')
-            .text("Count");
+            .text("Total number of uses");
 
         // Add the Y Axis
         g.append("g")
             .call(d3.axisLeft(y)
                 .ticks(5)
-                .tickFormat(d3.format(".0s")))
+                .tickFormat(yTickFormat))
             .append("text")  // add y-axis title
             .attr("x", 0)
             .attr("y", -title_font_size)
@@ -733,17 +711,30 @@ d3.json("stations.json", function(error, data) {
     function write_conclusion() {
         let y_value = select_option();
 
-        let conclusion = {"INCOME": "Conclusion: Income <br><br>" +
-            "Based on neighborhood income data collected from www.city-data.com, it appears that " +
-            "CoGo stations are primarily placed to serve community that has annual median household " +
-            "income lower than $80,000. CoGo bikes in lower-income areas are less likely to be used " +
-            "comparing to bikes in higher-income areas.",
-            "POPULATION": "Conclusion: Population  <br><br>Based on " +
-            "neighborhood population data collected from www.city-data.com, it appears that CoGo stations " +
-            "are primarily placed to serve community that has population lower than 2,000.",
-            "N_HOUSEHOLD": "Conclusion: Household <br><br>Based on neighborhood household data collected from www.city-data.com, it appears that CoGo stations are primarily placed to serve community in areas where number of households is between 500 to 1,000.",
-            "AGE": "Conclusion: Age <br><br>Based on neighborhood household data collected from www.city-data.com, it appears that CoGo stations are primarily placed to serve community in areas where age of residents is between 25 to 35. Users with age over than 35 use CoCo share bikes more frequently than younger users do."
+        let conclusion = {"INCOME": "Conclusion: Income" +
+            "<br><br>Cogo bike share stations in context with the average income for the residencies around them. " +
+            "This gives an estimation of the socioeconomic status of users of a given station." +
+            "<br><br>According to the data, it seems CoGo stations are less likely to be used in lower-income " +
+            "areas than medium of higher-income areas.",
 
+            "POPULATION": "Conclusion: Residents" +
+            "<br><br>Cogo bike share stations in context with the number of residents in the neighborhoods around " +
+            "them. This gives an estimation of how many potential users have access to a given station." +
+            "<br><br>According to the data, it seems CoGo stations are primarily expected to serve neighborhoods " +
+            "with less than 2,000 residents.",
+
+            "N_HOUSEHOLD": "Conclusion: Household" +
+            "<br><br>Cogo bike share stations in context with the number of households around them. This gives an" +
+            " estimation of how many potential households have access to a given station." +
+            "<br><br>According to the data, it seems CoGo stations are primarily expected to serve neighborhoods " +
+            "with 500 to 1,000 households.",
+
+            "AGE": "Conclusion: Age" +
+            "<br><br>Cogo bike share stations in context with the average age of residents in the neighborhoods " +
+            "around them. This gives an estimation of the average user age of a given station."+
+            "<br><br>According to the data, it seems CoGo stations are primarily expected to serve neighborhoods " +
+            "with users (on average) between 30 and 40 years old. Users between 35 and 47 years tend to use CoGo " +
+            "more frequently than younger users."
     };
 
         d3.select("#conclusion")
@@ -751,53 +742,58 @@ d3.json("stations.json", function(error, data) {
     }
 
 
-    let options_list = ['INCOME', 'POPULATION', 'N_HOUSEHOLD', 'AGE'];
+    const options_list = ['INCOME', 'POPULATION', 'N_HOUSEHOLD', 'AGE'];
 
-    let attributeCovert = {
+    const attributeCovert = {
         "INCOME": "Income",
-        "POPULATION": "Population",
+        "POPULATION": "Residents",
         "N_HOUSEHOLD": "Households",
         "AGE": "Age"
     };
 
     // legends colors
-    let colors = {
+    const colors = {
         "INCOME": [["0-20k", "#99CCFF"],["20k-40k", "#649EE2"], ["40k-60k", "#3674CE"], ["60k-80k", "#2E619E"], [">80k", "#193556"]],
         "POPULATION": [["0-1k", "#E3C7F2"], ["1-2k", "#D786EA"], ["2-3k", "#B237CC"], ["3-4k", "#75198C"], [">5k", "#491E54"]],
         "N_HOUSEHOLD": [["0-300", "#D1F2EB"],["300-600", "#76D7C4"], ["600-900", "#16A085"], ["900-1200", "#0E6251"], [">1200", "#145A32"]],
         "AGE": [["0-20", "#F9D7C0"],["20-25", "#FFB476"], ["25-30", "#FF881D"], ["30-35", "#D1620F"], [">35", "#843C0B"]]
     };
 
-    let svg_w = 800,
+    const svg_w = 800,
         svg_h = 300,
-        margin = {top: 50, right: 100, bottom: 50, left: 40},
+        margin = {top: 50, right: 113, bottom: 50, left: 40},
         width = svg_w - margin.left - margin.right,
         height = svg_h - margin.top - margin.bottom;
 
-    let svg = d3.select("#chart").append("svg").attr("width", svg_w).attr("height", svg_h);
+    const tooltipWidth = 280;
+    const tooltipHeight = 60;
 
-    let tooltipWidth = 280;
-    let tooltipHeight = 60;
+    let svg = d3.select("#chart").append("svg").attr("width", svg_w).attr("height", svg_h);
 
     let tooltipUp = d3.select("body")  // site name
         .append("div")
         .attr("class", "tooltipUp")
+        .attr("transform", "translate(0, -100)")  // prevent tooltip from affecting the footer
         .style("width", tooltipWidth + "px")
         .style("height", tooltipHeight + "px");
 
     let tooltipDown = d3.select("body")  // value
         .append("div")
         .attr("class", "tooltipDown")
+        .attr("transform", "translate(0, -100)")
         .style("width", tooltipWidth + "px")
         .style("height", tooltipHeight + "px");
 
     let tooltipSymbol = d3.select("body")  // symbol
         .append("div")
         .attr("class", "tooltipSymbol")
+        .attr("transform", "translate(0, -100px )")
         .style("height", tooltipHeight + "px");
+
 
     draw_list(options_list);
     new_draw_map(data);
     draw_chart();
     write_conclusion();
+    draw_parallel();
 });
