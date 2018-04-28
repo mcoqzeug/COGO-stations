@@ -1,6 +1,7 @@
 <html>
     <head>
         <script src="d3.v4.min.js"></script>
+        <script src="echarts.min.js"></script>
         <script src="//maps.google.com/maps/api/js?key=AIzaSyA4utTxvNgWCaBigDNMUNGkvzCstDgX2hQ"></script>
         <link rel="stylesheet" href="style.css">
     </head>
@@ -27,7 +28,7 @@
                 </td>
                 <td width="80"></td> <!-- Column 3: blank -->
                 <td class='chart_td'> <!-- Column 4: map and chart -->
-                    <table id="char_column">
+                    <table>
                         <tr> <td id='list_radio'></td> </tr>
                         <tr>
                             <td> <div id="map"></div> </td>
@@ -36,12 +37,10 @@
                             <input type='radio' id='bar' name='options2' value='bar' checked='checked'>
                             <label class="tooltipO" for='bar'>
                                 Bar Chart
-                                <!--<span class="tooltipOText"> Tooltip text </span>-->
                             </label>&nbsp;&nbsp;
                             <input type='radio' id='scatter_plot' name='options2' value='scatter_plot'>
                             <label class="tooltipO" for='scatter_plot'>
                                 Scatter Plot
-                                <!--<span class="tooltipOText"> Tooltip text </span>-->
                             </label>&nbsp;&nbsp;
                         </td> </tr>
                         <tr> <td> <div id="chart"></div> </td> </tr>
@@ -50,14 +49,54 @@
                 </td>
                 <td width="80"></td> <!-- Column 5: blank -->
             </tr>
+            <tr> <td height="40"> </td> </tr>
             <tr>
                 <td width="80"></td>
-                <td colspan="3">hhh</td>
+                <td colspan="3">
+                    <div class="row">
+                        <!-- parallel coordinates -->
+                        <div class="column left" id="container" style="height: 300px;"></div>
+                        <div class="column right" style="color: #696969;">
+                            In conclusion, CoGo stations tend to serve areas that have population density lower
+                            than 2,000, where number of households between 500 to 1,000 and age of residents is
+                            between 30 and 35, with annual median household income lower than $80,000. Also, a
+                            very strong correlation between income and the usage of sharing-bikes does not exist
+                            from our analysis. However, we could obverse some patterns such as bikes from low-income
+                            areas tend to be less likely used comparing to higher income areas, and rich area
+                            (average annual income is between $80,000 to $100,000) has fairly small number of CoGo
+                            bike stations. Another interesting finding is that users with age over than 35 use CoGo
+                            share bikes more frequently than younger users do.
+                        </div>
+                    </div>
+
+                </td>
                 <td width="80"></td>
             </tr>
-
+            <tr> <td height="40"> </td> </tr>
         </table>
-
+        <footer>
+            <div class="row">
+                <div class="column left">
+                    <p> <STRONG>Team Members</STRONG>
+                        <br><br>Alex Getz (VCD)
+                        <br>Jeanie Chen (DA)
+                        <br>Junhao Li (DA)
+                        <br>Haoyan Xiang (DA)
+                        <br>Juanxi Li (CSE)
+                        <br>Chi-Chun Lu (CSE)
+                    </p>
+                </div>
+                <div class="column right">
+                    <p> <STRONG>LINK</STRONG> </p>
+                    <a href="https://member.cogobikeshare.com/stations"> CoGo Bike Share </a><br>
+                    <a href="http://www.city-data.com/income/income-Columbus-Ohio.html"> City-data </a><br>
+                    <a href="https://d3js.org/"> D3 </a><br>
+                    <a href="https://ecomfe.github.io/echarts-doc/public/en/index.html"> ECharts </a><br>
+                </div>
+            </div>
+        </footer>
         <script src="map.js"></script>
+        <script src="parallel.js"></script>
     </body>
+
 </html>
