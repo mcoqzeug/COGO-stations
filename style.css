@@ -6,64 +6,59 @@
 /* ALL TABLES */
 table {
     width: 100%;
-    border-collapse:collapse;
-    font-family: sans-serif;
-    padding: 0;
+    border-collapse: collapse;
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
 table, td {
-    /*border: 1px solid black;*/
+    border: 1px solid black;
 }
 
 .chart_td {
     vertical-align: top;
-}
-
-/* Chart Title Tds */
-#list_title1, #list_title2 {
-    text-align: center;
-    font-weight: 900;
-    color: #696969;
-}
-
-#list_title1 {
-    font-size: 38px;
-}
-
-#list_title2 {
-    font-size: 53px;
-}
-
-.text_column {
-    width: 300px;
-    color: #696969;
-}
-
-#conclusion {
-    background: #E0E0E0;
-    position: relative;
-}
-
-
-#conclusion_content {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-}
-
-/* Chart  Tds */
-#list_radio {
-    vertical-align: top;
-    background-color: #696969;
-    text-align: left;
-    font-size: 16px;
     padding: 10px;
 }
 
+/* text_column */
+#text_column {
+    color: #696969;
+}
+
+#title1, #title2{
+    text-align: center;
+    font-weight: 900;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+#title1 {
+    font-size: 37px;
+}
+
+#title2 {
+    font-size: 55px;
+}
+
+#overview, #conclusion {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+
+#overview {
+    height: 140px;
+}
+
+#conclusion {
+    vertical-align: top;
+    background: #E0E0E0;
+    height: 220px;
+    padding: 5px;
+}
+
+
+/* map */
 #map {
     width: 100%;
-    height: 400px;
+    height: 300px;
     margin: 0;
     padding: 0;
 }
@@ -79,10 +74,6 @@ table, td {
     font: 10px sans-serif;
 }
 
-/* Colour Table and individual tds - Colour key, Row 1*/
-#colours {
-    width: 30%;
-}
 
 /* Line Chart lines, tooltips and All axes text and paths */
 .tooltipUp, .tooltipDown, .tooltipSymbol {
@@ -93,21 +84,22 @@ table, td {
     font-size: 20px;
     font-weight: bold;
     font-family: sans-serif;
-    border-radius: 4px;
     pointer-events: none;
 }
 
 .tooltipUp {
     background: #696969;
+    border: 1px solid #696969;
     color: white;
 }
 
 .tooltipDown {
     background: white;
+    border: 1px solid #696969;
     color: #696969;
 }
 
-.dolorImg {
+.symbolImg {
     width: 50px;
     height: 50px;
     text-align: left;
@@ -115,31 +107,76 @@ table, td {
     margin: 0;
 }
 
-.line {
-    fill: none;
-    stroke-width: 2.5px;
-}
-
 
 /* Input Boxes */
+#list_radio, #list_radio2 {
+    vertical-align: top;
+    text-align: left;
+    font-size: 16px;
+    padding: 10px;
+}
+
+#list_radio {
+    color: white;
+    background: #696969;
+}
+
+#list_radio2 {
+    color: #696969;
+}
+
 input[type=radio] {
     display:none;
 }
 
-input[name="options"] {
+input[name="options"], input[name="options2"] {
     display:none;
     font-size: 14px;
 }
 
-input[name="search_option"]:checked + label {
-    color: #523ba5;
+input[name="options2"] + label {
+    color: #696969;
+    background: white;
 }
 
-input[name="options"]:checked + label {
-    color: #523ba5;
+input[name="options"]:checked + label{
+    color: #696969;
+    background: white;
 }
 
-#input {
-    padding: 10px;
-    font-size: 20px;
+input[name="options2"]:checked + label {
+    color: white;
+    background:  #696969;
+}
+
+.tooltipO {
+    position: relative;
+    display: inline-block;
+    padding: 5px;
+    background: #696969;
+    border: 3px solid white;
+}
+
+.tooltipO .tooltipOText {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+
+    /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltipO:hover .tooltipOText {
+    visibility: visible;
+    opacity: 1;
 }
