@@ -199,7 +199,7 @@ d3.json("stations.json", function(error, data) {
 
     function add_legends(g, y_value) {
         let legend = g.append('g')
-            .attr("transform", "translate("+ (width+40).toString() + ", 0)")
+            .attr("transform", "translate("+ (width+20).toString() + ", 0)")
             .selectAll(".legend")
             .data(colors[y_value])
             .enter();
@@ -213,8 +213,8 @@ d3.json("stations.json", function(error, data) {
 
         legend.append("text")
             .attr('fill', 'black')
-            .attr("text-anchor", "end")
-            .attr("transform", function (d, i) { return "translate(-5, " + (15 + i*25).toString() + ")" })
+            .attr("text-anchor", "start")
+            .attr("transform", function (d, i) { return "translate(24, " + (15 + i*25).toString() + ")" })
             .text(function (d) { return d[0] });
     }
 
@@ -238,7 +238,7 @@ d3.json("stations.json", function(error, data) {
         }
 
         x.domain(data
-            .sort(function(a, b) { return b[y_value] - a[y_value] })
+            .sort(function(a, b) { return a[y_value] - b[y_value] })
             .map(function(d) { return d[x_value] }))
             .paddingInner(0.1)
             .paddingOuter(0.1);
@@ -270,6 +270,11 @@ d3.json("stations.json", function(error, data) {
             .text("Stations")
         ;
 
+        let yTickFormat = d3.format(".0s");
+
+        if (y_value === "N_HOUSEHOLD") {
+            yTickFormat = null;
+        }
 
 
         // y-axis
@@ -277,7 +282,8 @@ d3.json("stations.json", function(error, data) {
             .attr("class", "axis axis--y")
             .call(d3.axisLeft(y)
                 .ticks(5)
-                .tickFormat(d3.format(".0s")))
+                .tickFormat(yTickFormat)
+            )
             .append("text")  // add y-axis title
             .attr("x", 0)
             .attr("y", -title_font_size)
@@ -365,7 +371,7 @@ d3.json("stations.json", function(error, data) {
             .attr("text-anchor", "middle")
             .attr("font-size", title_font_size)
             .attr('fill', 'black')
-            .text(x_value);
+            .text("Count");
 
         // Add the Y Axis
         g.append("g")
@@ -379,7 +385,7 @@ d3.json("stations.json", function(error, data) {
             .attr("text-anchor", "start")
             .attr("font-size", title_font_size)
             .attr('fill', 'black')
-            .text(y_value);
+            .text(attributeCovert[y_value]);
 
         add_legends(g, y_value)
     }
@@ -729,14 +735,14 @@ d3.json("stations.json", function(error, data) {
 
     let svg_w = 800,
         svg_h = 300,
-        margin = {top: 50, right: 60, bottom: 50, left: 30},
+        margin = {top: 50, right: 100, bottom: 50, left: 40},
         width = svg_w - margin.left - margin.right,
         height = svg_h - margin.top - margin.bottom;
 
     let svg = d3.select("#chart").append("svg").attr("width", svg_w).attr("height", svg_h);
 
     let tooltipWidth = 280;
-    let tooltipHeight = 50;
+    let tooltipHeight = 60;
 
     let tooltipUp = d3.select("body")  // site name
         .append("div")
