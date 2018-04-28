@@ -5,13 +5,14 @@
 
 /* ALL TABLES */
 table {
-    width: 100%;
     border-collapse: collapse;
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
 table, td {
     /*border: 1px solid black;*/
+    min-width: 80px;
+    /*max-width: 800px;*/
 }
 
 .chart_td {
@@ -67,14 +68,6 @@ table, td {
     position: absolute;
 }
 
-.effective svg {
-    width: 60px;
-    height: 60px;
-    padding-right: 100px;
-    font: 10px sans-serif;
-}
-
-
 /* Line Chart lines, tooltips and All axes text and paths */
 .tooltipUp, .tooltipDown, .tooltipSymbol {
     text-align: center;
@@ -114,39 +107,22 @@ table, td {
     text-align: left;
     font-size: 16px;
     padding: 10px;
+    border: 2px solid white;
 }
 
-#list_radio {
-    color: white;
-    background: #696969;
-}
-
-#list_radio2 {
-    color: #696969;
-}
-
-input[type=radio] {
-    display:none;
-}
-
-input[name="options"], input[name="options2"] {
-    display:none;
-    font-size: 14px;
-}
-
-input[name="options2"] + label {
+#list_radio2, input[name="options2"] + label, input[name="options"]:checked + label {
     color: #696969;
     background: white;
 }
 
-input[name="options"]:checked + label{
-    color: #696969;
-    background: white;
-}
-
-input[name="options2"]:checked + label {
+#list_radio, input[name="options2"]:checked + label {
     color: white;
     background:  #696969;
+}
+
+input[name="options"], input[name="options2"], input[type=radio] {
+    display:none;
+    font-size: 14px;
 }
 
 .tooltipO {
@@ -157,30 +133,47 @@ input[name="options2"]:checked + label {
     border: 3px solid white;
 }
 
-.tooltipO .tooltipOText {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -60px;
-
-    /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
-    opacity: 0;
-    transition: opacity 1s;
-}
-
-.tooltipO:hover .tooltipOText {
+.tooltipO:hover {
+    text-decoration: underline;
     visibility: visible;
     opacity: 1;
 }
 
-.tooltipO:hover{
-    text-decoration: underline;
+
+/* parallel */
+* {
+    box-sizing: border-box;
+}
+
+/* Create two unequal columns that floats next to each other */
+.column {
+    float: left;
+    padding: 10px;
+    /*height: 300px; !* Should be removed. Only for demonstration *!*/
+}
+
+.left {
+    width: 55%;
+}
+
+.right {
+    width: 45%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+footer {
+    margin-left: 80px;
+    margin-right: 80px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: black;
+    border-top: 2px dashed #E0E0E0;
+    clear: left;
+    text-align: left;
 }
