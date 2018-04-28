@@ -5,15 +5,24 @@ d3.json("stations.json", function(error, data) {
     function draw_list(options_list) {
         // get distinct values of search_opt from data
         // dynamically create radio button with none selected
-        let radio_string = "";
+        let op = attributeCovert[options_list[0]];
+        let radio_string = "<input type='radio' id='" + options_list[0] +
+            "' name='options' value='" + options_list[0] + "' checked='checked'" +
+            "><label class=\"tooltipO\" for='" + options_list[0] + "'>" + op +
+            // "<span class=\"tooltipOText\">Tooltip text</span>"+
+            "</label>&nbsp;&nbsp;";
 
-        for (let i = 0; i < options_list.length; i++) {
-            let op = attributeCovert[options_list[i]];
+        for (let i = 1; i < options_list.length; i++) {
+            op = attributeCovert[options_list[i]];
             radio_string += "<input type='radio' id='" + options_list[i] +
-                "' name='options' value='" + options_list[i] + "' checked='checked'" +
-                "><label class=\"tooltipO\" for='" + options_list[i] + "'>" + op +
-                "<span class=\"tooltipOText\">Tooltip text</span></label>&nbsp;&nbsp;";
+                "' name='options' value='" + options_list[i] +
+                // " checked='checked'" +
+                "'><label class=\"tooltipO\" for='" + options_list[i] + "'>" + op +
+                // "<span class=\"tooltipOText\">Tooltip text</span>"+
+                "</label>&nbsp;&nbsp;";
         }
+
+        console.log(radio_string);
 
         document.getElementById('list_radio').innerHTML = radio_string;
 
@@ -27,6 +36,18 @@ d3.json("stations.json", function(error, data) {
 
                 d3.select("#conclusion").selectAll("div").remove();  // remove old conclusion
                 write_conclusion();  // add new conclusion
+
+                // TODO
+                d3.select("#bike").selectAll("img").remove();
+                if (select_option() === "INCOME") {
+                    d3.select("#bike").html("<img src=\"img/income_bike.png\" height=\"180\" width=\"180\">")
+                } else if (select_option() === "AGE") {
+                    d3.select("#bike").html("<img src=\"img/age_bike.png\" height=\"180\" width=\"180\">")
+                } else if (select_option() === "N_HOUSEHOLD") {
+                    d3.select("#bike").html("<img src=\"img/households_bike.png\" height=\"180\" width=\"180\">")
+                } else if (select_option() === "POPULATION") {
+                    d3.select("#bike").html("<img src=\"img/population_bike.png\" height=\"180\" width=\"180\">")
+                }
         });
 
         // set the on_change event to redraw charts whenever a checkbox option is selected
@@ -111,25 +132,25 @@ d3.json("stations.json", function(error, data) {
                 return "img/3_4.png"
             } else return "img/4+.png"
         } else if (y_value === "N_HOUSEHOLD") {  // TODO change pins
-            if (value < 1000) {
-                return "img/0_1.png"
-            } else if (value < 2000) {
-                return "img/1_2.png"
-            } else if (value < 3000) {
-                return "img/2_3.png"
-            } else if (value < 4000) {
-                return "img/3_4.png"
-            } else return "img/4+.png"
+            if (value < 300) {
+                return "img/0_300.png"
+            } else if (value < 600) {
+                return "img/300_600.png"
+            } else if (value < 900) {
+                return "img/600_900.png"
+            } else if (value < 1200) {
+                return "img/900_1200.png"
+            } else return "img/1200+.png"
         } else if (y_value === "AGE") {  // TODO change pins
-            if (value < 1000) {
-                return "img/0_1.png"
-            } else if (value < 2000) {
-                return "img/1_2.png"
-            } else if (value < 3000) {
-                return "img/2_3.png"
-            } else if (value < 4000) {
-                return "img/3_4.png"
-            } else return "img/4+.png"
+            if (value < 20) {
+                return "img/0_20age.png"
+            } else if (value < 25) {
+                return "img/20_25age.png"
+            } else if (value < 30) {
+                return "img/25_30age.png"
+            } else if (value < 35) {
+                return "img/30_35age.png"
+            } else return "img/35+age.png"
         }
 
     }
@@ -144,6 +165,10 @@ d3.json("stations.json", function(error, data) {
             tooltipSymbol.html("<img class=\"symbolImg\" src=\"img/dollar.png\">");
         } else if (y_value === "POPULATION") {
             tooltipSymbol.html("<img class=\"symbolImg\" src=\"img/population.png\">");
+        } else if (y_value === "AGE") {
+            tooltipSymbol.html("<img class=\"symbolImg\" src=\"img/age.png\">");
+        } else if (y_value === "N_HOUSEHOLD") {
+            tooltipSymbol.html("<img class=\"symbolImg\" src=\"img/households.png\">");
         }
 
         let bar_id = "rect[id='" + d["BIKESHARE_ID"] + "']";
@@ -272,7 +297,7 @@ d3.json("stations.json", function(error, data) {
 
         let yTickFormat = d3.format(".0s");
 
-        if (y_value === "N_HOUSEHOLD") {
+        if (y_value === "N_HOUSEHOLD" || y_value === "AGE") {
             yTickFormat = null;
         }
 
@@ -357,13 +382,19 @@ d3.json("stations.json", function(error, data) {
             .on("mousemove", function () { mouse_move(event) })
             .on("mouseout", function (d) { mouse_out(d, y_value) });
 
+        let yTickFormat = d3.format(".0s");
+
+        if (y_value === "N_HOUSEHOLD" || y_value === "AGE") {
+            yTickFormat = null;
+        }
+
         // Add the X Axis
         g.append("g")
             .attr("transform", "translate(0," + height + ")")
             // .attr("class", "axis--x2")
             .call(d3.axisBottom(x)
                 .ticks(5)
-                .tickFormat(d3.format(".0s")))
+                .tickFormat(yTickFormat))
             .append("text")
             .attr("x", width/2)  // center aligned title
             .attr("y", title_font_size*2)
@@ -709,14 +740,18 @@ d3.json("stations.json", function(error, data) {
             "comparing to bikes in higher-income areas.",
             "POPULATION": "Conclusion: Population  <br><br>Based on " +
             "neighborhood population data collected from www.city-data.com, it appears that CoGo stations " +
-            "are primarily placed to serve community that has population lower than 2,000."};
+            "are primarily placed to serve community that has population lower than 2,000.",
+            "N_HOUSEHOLD": "Conclusion: Household <br><br>Based on neighborhood household data collected from www.city-data.com, it appears that CoGo stations are primarily placed to serve community in areas where number of households is between 500 to 1,000.",
+            "AGE": "Conclusion: Age <br><br>Based on neighborhood household data collected from www.city-data.com, it appears that CoGo stations are primarily placed to serve community in areas where age of residents is between 25 to 35. Users with age over than 35 use CoCo share bikes more frequently than younger users do."
+
+    };
 
         d3.select("#conclusion")
             .html(conclusion[y_value]);
     }
 
 
-    let options_list = ['POPULATION', 'N_HOUSEHOLD', 'AGE','INCOME'];
+    let options_list = ['INCOME', 'POPULATION', 'N_HOUSEHOLD', 'AGE'];
 
     let attributeCovert = {
         "INCOME": "Income",
@@ -730,7 +765,7 @@ d3.json("stations.json", function(error, data) {
         "INCOME": [["0-20k", "#99CCFF"],["20k-40k", "#649EE2"], ["40k-60k", "#3674CE"], ["60k-80k", "#2E619E"], [">80k", "#193556"]],
         "POPULATION": [["0-1k", "#E3C7F2"], ["1-2k", "#D786EA"], ["2-3k", "#B237CC"], ["3-4k", "#75198C"], [">5k", "#491E54"]],
         "N_HOUSEHOLD": [["0-300", "#D1F2EB"],["300-600", "#76D7C4"], ["600-900", "#16A085"], ["900-1200", "#0E6251"], [">1200", "#145A32"]],
-        "AGE": [["0-20", "#D1F2EB"],["20-25", "#76D7C4"], ["25-30", "#16A085"], ["30-35", "#0E6251"], [">35", "#145A32"]]
+        "AGE": [["0-20", "#F9D7C0"],["20-25", "#FFB476"], ["25-30", "#FF881D"], ["30-35", "#D1620F"], [">35", "#843C0B"]]
     };
 
     let svg_w = 800,
