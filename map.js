@@ -3,7 +3,6 @@ d3.json("stations.json", function(error, data) {
 
     // draw the radio list
     function draw_list(options_list) {
-        // get distinct values of search_opt from data
         // dynamically create radio button with none selected
         let op = attributeCovert[options_list[0]];
         let radio_string = "<input type='radio' id='" + options_list[0] +
