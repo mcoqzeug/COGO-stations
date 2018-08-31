@@ -6,3 +6,6 @@ in python 2.7 or
 in Python 3.
 
 Run your browser and type in the address: http://localhost:8888 and you should see the local files and folders where you start your browser.
+
+Other Documentation
+https://drive.google.com/open?id=1p-SA0Hsbjkf3OtwolHR3TTdcgAKqZPSn
